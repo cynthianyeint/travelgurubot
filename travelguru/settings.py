@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'travelguruapp'
 ]
 
@@ -75,9 +76,17 @@ WSGI_APPLICATION = 'travelguru.wsgi.application'
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    # }
+    'default':{ #heroku postgresql
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'dc14r5b8vcgkci',
+        'USER': 'dthvlvaqjxmjco',
+        'PASSWORD': '05fd6a529a49d4bab861a625f0dfa0235350d94b848d530b3260d1e059a97d2d',
+        'HOST': 'ec2-54-163-246-154.compute-1.amazonaws.com',
+        'PORT': '5432',
     }
 }
 

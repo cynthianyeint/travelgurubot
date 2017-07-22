@@ -15,7 +15,10 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
+from travelguruapp import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^test', views.test),
+    url(r'^webhook', views.webhook)
 ]
