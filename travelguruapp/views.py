@@ -59,9 +59,11 @@ def makeWebhookResult(keyword):
 	elif (keyword == "askprice"):
 		#speech = "The price includes 2 days, 1 night stay, at a hotel of your choice from our trusted hotel partners. All meals included. How does that sound to you?"
 		speech = data.price_detail
-	elif (keyword == "uncertainty"):
+	elif (keyword == "hmm"):
 		#speech = "Don't hestitate any longer! This promotional price is only valid if you book before 8th August 2017." + " In addition, we will throw in a dinner cruise free of charge if you sign up together!"
 		speech = data.promotion_one + "\n" + "\n" + data. promotion_two
+	elif (keyword == "uncertainty"):
+		speech = "Here are some photos of what you will see on the dinner cruise."
 	else:
 		speech = "Testing"
 
