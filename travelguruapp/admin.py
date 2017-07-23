@@ -6,3 +6,4 @@ from .models import *
 admin.site.register(General)
 admin.site.register(Place)
 admin.site.register(Image)
+admin.site.register(Rate)

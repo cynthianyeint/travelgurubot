@@ -18,3 +18,7 @@ class Place (models.Model):
 class Image (models.Model):
 	created = models.DateTimeField(auto_now_add=True)
 	url = models.CharField(max_length=200, blank=False)
+
+class Rate (models.Model):
+	created = models.DateTimeField(auto_now_add=True)
+	rate = models.CharField(max_length=100, blank=True)
