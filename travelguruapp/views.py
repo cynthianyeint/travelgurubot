@@ -41,9 +41,12 @@ def processRequest(req):
 			res = rate_service(keyword)
 		else:
 			res = makeWebhookResult(keyword)
-	else:
-		keyword = result.get("resolvedQuery")#request come from button click
+	elif (action == "choose_place"): #request from button click - choosing place
+		keyword = result.get("resolvedQuery")
 		res = reply_click_event(keyword)
+	else: #request from button click - rate service
+		keyword = result.get("resolvedQuery")
+		res = save_rate(keyword)
 	return res
 
 def makeWebhookResult(keyword):
@@ -179,6 +182,66 @@ def reply_click_event(keyword):
 
 def rate_service(keyword):
 	speech = "Rate the services that I have provided on a scale of 1 to 5."
+
+	slack_message = {
+		"text": speech,
+		"attachments":[
+			{
+				"text": speech,
+				"callback_id": "rate_service",
+				"color": "#3AA3E3",
+				"attachment_type": "default",
+				"actions": [
+					{
+						"name": "btn",
+						"text": "1, terrible",
+						"type": "button",
+						"value": "terrible"
+					},
+					{
+						"name": "btn",
+						"text": "2, poor",
+						"type": "button",
+						"value": "poor"
+					},
+					{
+						"name": "btn",
+						"text": "3, average",
+						"type": "button",
+						"value": "average"
+					},
+					{
+						"name": "btn",
+						"text": "4, good",
+						"type": "button",
+						"value": "good"
+					}
+					,{
+						"name": "btn",
+						"text": "5, excellent",
+						"type": "button",
+						"value": "excellent"
+					}
+				]
+			}
+		]
+	}
+
+	return {
+		"speech": speech,
+		"displayText": speech,
+		"data": {"slack": slack_message},
+	}
+
+def save_rate(keyword):
+	print ("Rate: ", keyword)
+
+	#save rate result to database
+	rating = Rate()
+	rating.rate = keyword
+	rating.save()
+
+	speech = "Thank you. Have a great day ahead."
 	return {
 		"speech": speech,
 		"displayText": speech,
