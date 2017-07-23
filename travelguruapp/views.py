@@ -32,15 +32,18 @@ def processRequest(req):
 	print(str(parameters.get("keyword")))
 
 	if (action == "handle_request"):
-		#keyword = result.get('resolvedQuery')
 		keyword = str(parameters.get("keyword"))
-		res = makeWebhookResult(keyword)
-	elif (action == "button_test"):
-		keyword = result.get('resolvedQuery')
-		res = testButton(keyword)
+		if (keyword == "uncertainty"): #detect uncertainty - show images, videos
+			res = show_images(keyword)
+		elif (keyword == "positive"): #detect positive decision
+			res = choose_place(keyword)
+		elif (keyword == "thanks"): #detect thanks & ask user to rate service
+			res = rate_service(keyword)
+		else:
+			res = makeWebhookResult(keyword)
 	else:
-		keyword = "testing"
-		res = makeWebhookResult(keyword)
+		keyword = result.get("resolvedQuery")#request come from button click
+		res = reply_click_event(keyword)
 	return res
 
 def makeWebhookResult(keyword):
@@ -57,58 +60,128 @@ def makeWebhookResult(keyword):
 	elif (keyword == "tellmore"):
 		speech = "We are having an amazing promotion now. Only " + data.price + " per person for a weekend vacation at Langkawi"
 	elif (keyword == "askprice"):
-		#speech = "The price includes 2 days, 1 night stay, at a hotel of your choice from our trusted hotel partners. All meals included. How does that sound to you?"
 		speech = data.price_detail
 	elif (keyword == "hmm"):
-		#speech = "Don't hestitate any longer! This promotional price is only valid if you book before 8th August 2017." + " In addition, we will throw in a dinner cruise free of charge if you sign up together!"
-		speech = data.promotion_one + "\n" + "\n" + data. promotion_two
-	elif (keyword == "uncertainty"):
-		speech = "Here are some photos of what you will see on the dinner cruise."
-	else:
-		speech = "Testing"
+		speech = data.promotion_one + "\n" + "\n" + data.promotion_two
+	elif (keyword == "room"):
+		speech = "Ok, cool! I will notify my human colleagues about your choices. They will contact you as soon as possible to make further arrangements."
+	else: 
+		speech = "Sorry! I didn't get."
 
 	return {
         "speech": speech,
         "displayText": speech,
-        # "data": data,
-        # "contextOut": [],
         "source": "travelguru"
     }
 
-def testButton(keyword):
-	print ("Keyword: ", keyword)
-	speech = "Testing button.."
-	
-	slack_message = {
-		"text": speech,
-		"attachments": [
-			{
-				"text": "Please Choose:",
-				"fallback": "Sorry. You are unable to choose",
-				"callback_id": "button_test",
-				"color": "#3AA3E3",
-				"attachment_type": "default",
-				"actions": [
-					{
-						"name": "btn",
-						"text": "Btn1",
-						"type": "button",
-						"value": "one"
-					},
-					{
-						"name": "btn",
-						"text": "Btn2",
-						"type": "button",
-						"value": "two"
-					}
-				]
-			}
-		]
-	}
+def show_media(keyword):
+	print ("Show media")
+	return show_images(keyword)
+	# show_video(keyword)
 
+
+def show_images(keyword):
+	speech = ":simple_smile:" + " Here are some photos of what you will see on the dinner cruise."
+	attachments = []
+	image = Image.objects.all()
+	for i in image:
+		attachments.append({
+				"text": "",
+				"fallback": "Sorry. We are not able to show pictures.",
+				"callback_id": "show_image",
+				"image_url": i.url,
+				"color": "#3AA3E3"
+			},)
+	slack_message ={
+		"text": speech,
+		"attachments": attachments
+	}
 	return {
         "speech": speech,
         "displayText": speech,
         "data": {"slack": slack_message},
         "source": "travelguru"
     }
+
+def show_video(keyword):
+	speech = "Here's a Youbue video of Langkawi"
+	slack_message = {
+		# "text": "<https://www.youtube.com/w atch?v=Sj_lR_UTt-s>",
+		"text": "<http://imgs.xkcd.com/comics/regex_golf.png>"
+	}
+	return {
+		"speech": speech,
+		"displayText": speech,
+		"data": {"slack": slack_message},
+		"source": "travelguru"
+	}
+
+def choose_place(keyword):
+	speech = "Great! You have definitely made the right choice!."
+	places = Place.objects.all()
+	place_name = []
+	place_id = []
+	for p in places:
+		place_name.append(p.name)
+		place_id.append(p.pk)
+	
+	button_details = []
+
+	for i in range (0, places.count()):
+		button_details.append({
+				"name": "btn",
+				"text": place_name[i],
+				"type": "button",
+				"value": place_id[i]
+			})
+
+	slack_message = {
+		"text": speech,
+		"attachments": [
+			{
+				"text": "Here are your choices: Please choose only 1 of them.",
+				"callback_id": "choose_place",
+				"color": "#3AA3E3",
+				"attachment_type": "default",
+				"actions": button_details
+			}
+		]
+	}
+	return {
+		"speech": speech,
+		"displayText": speech,
+		"data": {"slack": slack_message},
+		"source": "travelguru"
+	}
+
+def reply_click_event(keyword):
+	selected_place = Place.objects.get(pk=keyword)
+	speech = "Great! You choose: " + selected_place.description #retrieve answer from backend. 
+
+	slack_message = {
+		"text": speech,
+		"attachments": [
+			{
+				"text": "Can you tell me more about the type of room that you intend to stay in?",
+				"callback_id": "choose_place",
+				"color": "#3AA3E3",
+				"attachment_type": "default"
+			}
+		]
+	}
+
+	return {
+		"speech": speech,
+		"displayText": speech,
+		"data": {"slack": slack_message},
+		"source": "travelguru"
+	}
+
+def rate_service(keyword):
+	speech = "Rate the services that I have provided on a scale of 1 to 5."
+	return {
+		"speech": speech,
+		"displayText": speech,
+		# "data": {"slack": slack_message},
+	}
+

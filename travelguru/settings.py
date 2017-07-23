@@ -25,7 +25,7 @@ SECRET_KEY = 'e7s^go2@ctbzrrr_z%&h50!vtpcavs!ip4h7p)rfhijd@9&#$q'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'travelgurubot.herokuapp.com']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'travelgurubot.herokuapp.com','5acf5bc3.ngrok.io']
 
 
 # Application definition
