@@ -7,6 +7,8 @@ from rest_framework.parsers import JSONParser
 
 from .models import *
 
+from datetime import datetime, time
+
 import json
 import os
 
@@ -234,17 +236,24 @@ def rate_service(keyword):
 	}
 
 def save_rate(keyword):
-	print ("Rate: ", keyword)
 
 	#save rate result to database
 	rating = Rate()
 	rating.rate = keyword
 	rating.save()
 
-	speech = "Thank you. Have a great day ahead."
+	now = datetime.now()
+	now_time = now.time()
+
+	print (now_time)
+	if time(23,00) <= now_time <= time(8,0):#night time
+		speech = "Thank you. Have a nice dream." #farewell msg for night time
+	else: #day time
+		speech = "Thank you. Have a great day ahead." #farewell msg for day time
+
+	
 	return {
 		"speech": speech,
-		"displayText": speech,
-		# "data": {"slack": slack_message},
+		"displayText": speech
 	}
 
