@@ -97,6 +97,11 @@ def show_images(keyword):
 				"image_url": i.url,
 				"color": "#3AA3E3"
 			},)
+	attachments.append({
+		"text": "Here is a Youtube video of Langkawi: <https://www.youtube.com/watch?v=Sj_lR_UTt-s>",
+		"color": "#3AA3E3"
+	})
+
 	slack_message ={
 		"text": speech,
 		"attachments": attachments
@@ -112,7 +117,7 @@ def show_video(keyword):
 	speech = "Here's a Youbue video of Langkawi"
 	slack_message = {
 		# "text": "<https://www.youtube.com/w atch?v=Sj_lR_UTt-s>",
-		"text": "<http://imgs.xkcd.com/comics/regex_golf.png>"
+		"text": "here is link: <http://imgs.xkcd.com/comics/regex_golf.png>"
 	}
 	return {
 		"speech": speech,
