@@ -29,11 +29,11 @@ def processRequest(req):
 	parameters = result.get("parameters")
 
 	print ("Result: ", result)
-	print ("Action: ", action)
-	print("Parameters: ", parameters)
-	print(str(parameters.get("keyword")))
-
-	if (action == "handle_request"):
+	
+	if (action == "welcome_user"):
+		keyword = str(parameters.get("keyword"))
+		res = welcome_user(keyword)
+	elif (action == "handle_request"):
 		keyword = str(parameters.get("keyword"))
 		if (keyword == "uncertainty"): #detect uncertainty - show images, videos
 			res = show_images(keyword)
@@ -50,6 +50,22 @@ def processRequest(req):
 		keyword = result.get("resolvedQuery")
 		res = save_rate(keyword)
 	return res
+
+def welcome_user(keyword):
+	now = datetime.now()
+	now_time = now.time()
+
+	
+	if time(23,00) <= now_time <= time(8,0):#night time
+		speech = "Hi.I have some great information to share, wanna know more?" #welcome msg for night time
+	else: #day time
+		speech = "Hi! Good morning.I have some great information to share, wanna know more?" #welcome msg for day time
+	
+	return {
+        "speech": speech,
+        "displayText": speech,
+        "source": "travelguru"
+    }
 
 def makeWebhookResult(keyword):
 	print ("Keyword: ", keyword)
@@ -79,12 +95,6 @@ def makeWebhookResult(keyword):
         "source": "travelguru"
     }
 
-def show_media(keyword):
-	print ("Show media")
-	return show_images(keyword)
-	# show_video(keyword)
-
-
 def show_images(keyword):
 	speech = ":simple_smile:" + " Here are some photos of what you will see on the dinner cruise."
 	attachments = []
@@ -113,18 +123,18 @@ def show_images(keyword):
         "source": "travelguru"
     }
 
-def show_video(keyword):
-	speech = "Here's a Youbue video of Langkawi"
-	slack_message = {
-		# "text": "<https://www.youtube.com/w atch?v=Sj_lR_UTt-s>",
-		"text": "here is link: <http://imgs.xkcd.com/comics/regex_golf.png>"
-	}
-	return {
-		"speech": speech,
-		"displayText": speech,
-		"data": {"slack": slack_message},
-		"source": "travelguru"
-	}
+# def show_video(keyword):
+# 	speech = "Here's a Youbue video of Langkawi"
+# 	slack_message = {
+# 		"text": "<https://www.youtube.com/w atch?v=Sj_lR_UTt-s>",
+# 		# "text": "here is link: <http://imgs.xkcd.com/comics/regex_golf.png>"
+# 	}
+# 	return {
+# 		"speech": speech,
+# 		"displayText": speech,
+# 		"data": {"slack": slack_message},
+# 		"source": "travelguru"
+# 	}
 
 def choose_place(keyword):
 	speech = "Great! You have definitely made the right choice!."
@@ -250,7 +260,7 @@ def save_rate(keyword):
 	now = datetime.now()
 	now_time = now.time()
 
-	print (now_time)
+	
 	if time(23,00) <= now_time <= time(8,0):#night time
 		speech = "Thank you. Have a nice dream." #farewell msg for night time
 	else: #day time
